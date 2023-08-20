@@ -55,11 +55,13 @@ h2
 
 .txt p
 {
+	text-align:left;
 	background:#1d1939;
 	padding: 5px 10px;
 	border-radius: 10px;
 	display:inline-block;
 	margin:5px;
+	max-width: 60%;
 }
 
 .reply
@@ -74,7 +76,8 @@ h2
 	border-radius: 10px;
 	display:inline-block;
 	margin:10px;
-	color: #cc077b;;
+	color: #cc077b;
+	max-width: 60%;
 }
 
 .logo
@@ -165,7 +168,8 @@ a:hover .link
 {
 	body 
 	{
-		font-size: 2.5vmax;	
+		font-size: 2.5vmax;
+		background-size: 100%;		
 	}
 	
 	.content
@@ -196,6 +200,12 @@ a:hover .link
 	{
 		font-size: larger;
 	}
+	
+	.txt p
+	{
+		border-radius: 20px;
+		margin:10px;
+	}	
 	
 	.icon
 	{
