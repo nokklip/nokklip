@@ -6,11 +6,19 @@ body {
 	background: #111;
 	background-image: url('../img/bg_skull.png');
 	background-size: 350px;
+	margin: 0px;
 }
 
 .content
 {
 	width: 50%;
+}
+
+.section
+{
+	margin-bottom: 40vh;
+	//text-align: left;
+	scroll-margin-top: 100px;
 }
 
 h1
@@ -22,12 +30,20 @@ footer
 {
 	font-size: smaller;
 	font-weight: bold;
+	color: #fc0189;
+	text-shadow: 0 0 10px #fd018a;		
 }
 
 h1,
 h1 a
 {
 	color: #fff;
+}
+
+h2
+{
+  color: #fc0189;
+  text-shadow: 0 0 10px #fd018a;	
 }
 
 .txt
@@ -53,11 +69,12 @@ h1 a
 
 .reply p
 {
-	background:#1d1939;
+	background: #760152;
 	padding: 5px 10px;
 	border-radius: 10px;
 	display:inline-block;
 	margin:10px;
+	color: #cc077b;;
 }
 
 .logo
@@ -78,6 +95,12 @@ h1 a
 	color: #f0f0f0;
 }
 
+.image
+{
+	width:75%;
+	border-radius: 12px;
+}
+
 .icon
 {
 	width:22px;
@@ -93,8 +116,13 @@ h1 a
 
 a
 {
-text-decoration: none;	
-	
+	color: #00f;
+	text-decoration: none;	
+}
+
+a:hover
+{
+	text-decoration: underline;	
 }
 
 .link img
@@ -118,6 +146,19 @@ a:hover .link
 {
 	background: #00f;
 	color: white;
+	text-decoration: none;	
+}
+
+.chain_1
+{
+	position:fixed;
+	
+	width: 100px;
+	height: 100vh;
+	background-image: url('../img/chain_1.png');
+	background-size: 50px;
+	background-repeat: repeat-y;
+	
 }
 
 @media only screen and (max-aspect-ratio: 1/1)
@@ -161,5 +202,10 @@ a:hover .link
 		width:40px;
 		height:40px;	
 	}	
+	
+	.chain_1
+	{
+		display: none;
+	}
 	
 }
