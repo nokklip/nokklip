@@ -1,3 +1,8 @@
+html
+{
+	scroll-behavior: smooth;
+}
+
 body {
 	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 	color: #555;
@@ -9,8 +14,24 @@ body {
 	margin: 0px;
 }
 
+.header
+{
+	width: 100%;
+	height: 30px;
+	background: black;
+	color: white;
+}
+
+.bg_img
+{
+	background: url("../img/noise_overlay.png") left, top / auto auto repeat, url("../img/nokklip_concert.png") center top / 100% auto no-repeat;
+	padding-top: 20vw;
+
+}
+
 .content
 {
+	
 	width: 50%;
 }
 
@@ -19,6 +40,18 @@ body {
 	margin-bottom: 40vh;
 	//text-align: left;
 	scroll-margin-top: 100px;
+}
+
+.bn img
+{
+	margin-top: 20vh;
+	margin-bottom: 20vh;
+	transition: transform .2s;
+}
+
+.bn img:hover
+{
+	transform: scale(1.2);
 }
 
 h1
@@ -53,15 +86,37 @@ h2
 	text-align:left;
 }
 
-.txt p
+.txt p,
+.bubble
 {
 	text-align:left;
-	background:#1d1939;
+	//background:#1d1939;
+	//background:#07041a;
+	background:#110b39;
 	padding: 5px 10px;
 	border-radius: 10px;
 	display:inline-block;
-	margin:5px;
+	margin:5px 0px;
 	max-width: 60%;
+}
+
+.txt p.tag
+{
+	color: #555;
+}
+
+.txt p.heading
+{
+	width:100%;
+}
+
+.txt p.footnote
+{
+	background: black;
+	color: #555;
+	float:right;
+	font-size: 1.0vmax;
+	width:30%;
 }
 
 .reply
@@ -71,7 +126,8 @@ h2
 
 .reply p
 {
-	background: #760152;
+	//background: #760152;
+	background: #2b0b39;
 	padding: 5px 10px;
 	border-radius: 10px;
 	display:inline-block;
@@ -89,6 +145,16 @@ h2
 	margin-top: 20px;
 }
 
+table.nav
+{
+	width:100%;
+}
+
+table.nav td
+{
+	padding: 0px 10px;
+}
+
 .link
 {
 	margin-bottom: 1em;
@@ -96,6 +162,11 @@ h2
 	padding: 10px;
 	background: #005;
 	color: #f0f0f0;
+}
+
+p img
+{
+	width: 100%;
 }
 
 .image
@@ -128,6 +199,35 @@ a:hover
 	text-decoration: underline;	
 }
 
+input,
+textarea
+{
+	margin:10px 0px;	
+	background: #2b0b39;
+	color: #cc077b;	
+	border: 0px;
+	border-radius: 5px;
+	border: 1px solid #6e1fed;
+}
+
+input
+{
+	padding: 10px;	
+	width:300px;	
+	border-radius:5px;
+}
+
+.btn
+{
+	margin:10px 0px;
+	padding: 10px;
+	width:100%;
+	border-radius: 5px;
+	border: 0px;
+	background: #005;
+	color: #fff;
+}
+
 .link img
 {
 	width: 40px;	
@@ -145,11 +245,13 @@ a:hover
 	padding-right: 10px;
 }
 
+.btn:hover,
 a:hover .link
 {
 	background: #00f;
 	color: white;
 	text-decoration: none;	
+	cursor: pointer;
 }
 
 .chain_1
@@ -161,6 +263,7 @@ a:hover .link
 	background-image: url('../img/chain_1.png');
 	background-size: 50px;
 	background-repeat: repeat-y;
+	z-index: -1;
 	
 }
 
@@ -201,7 +304,8 @@ a:hover .link
 		font-size: larger;
 	}
 	
-	.txt p
+	.txt p,
+	.bubble
 	{
 		border-radius: 20px;
 		margin:10px;
@@ -218,4 +322,36 @@ a:hover .link
 		display: none;
 	}
 	
+}
+
+@keyframes flickerAnimation {
+  0%   { opacity:0.26; filter: blur(0.0px);    }
+  20%   { opacity:0.27; filter: blur(1.1px); }
+  40%  { opacity:0.26; }
+  60%  { opacity:0.27; filter: blur(0.0px);    }
+  80%  { opacity:0.25; }
+  90%  { opacity:0.28; }
+  100% { opacity:0.25; }
+}
+
+.animate-flicker {
+    animation: flickerAnimation 0.5s infinite;
+}
+
+.bg_img_1
+{
+	position: fixed;
+	right: 100;
+	z-index: -5;
+	width: 50%;
+	opacity: 0.25;
+}
+
+.bg_img_2
+{
+	position: fixed;
+	left: -200px;
+	z-index: -5;
+	width: 50%;	
+	opacity: 0.25;
 }
