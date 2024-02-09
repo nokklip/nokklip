@@ -26,12 +26,10 @@ body {
 {
 	background: url("../img/noise_overlay.png") left, top / auto auto repeat, url("../img/nokklip_concert.png") center top / 100% auto no-repeat;
 	padding-top: 20vw;
-
 }
 
 .content
 {
-	
 	width: 50%;
 }
 
