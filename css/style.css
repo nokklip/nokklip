@@ -14,6 +14,28 @@ body {
 	margin: 0px;
 }
 
+.sticky_header
+{
+	z-index: 1;
+	background: #08051d;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+	padding: 10px;
+	display: flex;
+	align-items:center;
+	color: white;
+	font-size: large;
+	background: rgb(8,5,29);
+	background: linear-gradient(0deg, rgba(8,5,29,0) 0%, rgba(8,5,29,1) 100%); 	
+}
+
+.sticky_header a
+{
+	padding-right:15px;
+}
+
 .header
 {
 	width: 100%;
@@ -28,9 +50,35 @@ body {
 	padding-top: 20vw;
 }
 
+.bg_img_store
+{
+	background: url("../img/noise_overlay.png") left, top / auto auto repeat, url("../img/nokklip_selling_merch.png") center top / 100% auto no-repeat;
+	padding-top: 20vw;
+}
+
+.caption
+{
+	font-size:smaller;
+	padding:5px;
+	font-family: monospace;
+	color: #3f286d;
+}
+
 .content
 {
 	width: 50%;
+}
+
+.noise_overlay
+{
+background: url("../img/noise.gif") left, top / auto auto repeat;
+  mix-blend-mode: overlay;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: 9999999999;
+pointer-events: none;
+opacity: 0.5;  
 }
 
 .section
@@ -52,6 +100,27 @@ body {
 	transform: scale(1.2);
 }
 
+.photo
+{
+	transform: rotate(-0.10);	
+	//filter: grayscale(0.5);	
+	width:75%;	
+	border-radius: 10px;
+	//border: 1px solid #22176b;
+	padding: 10px;
+	//padding-bottom: 40px;
+	background: #08041e;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.infobox
+{
+	border-radius: 10px;
+	background: #08041e;
+	padding: 10px;
+}
+
 h1
 {
 	font-size: smaller;	
@@ -61,8 +130,6 @@ footer
 {
 	font-size: smaller;
 	font-weight: bold;
-	color: #fc0189;
-	text-shadow: 0 0 10px #fd018a;		
 }
 
 h1,
@@ -71,10 +138,12 @@ h1 a
 	color: #fff;
 }
 
-h2
+.sticky_header a,
+h2, footer
 {
-  color: #fc0189;
-  text-shadow: 0 0 10px #fd018a;	
+	color: #eee;
+	font-weight: bold;
+	filter: drop-shadow(2px 4px 0px #260b2c);
 }
 
 .txt
@@ -94,8 +163,15 @@ h2
 	padding: 5px 10px;
 	border-radius: 10px;
 	display:inline-block;
-	margin:5px 0px;
+	margin:5px;
 	max-width: 60%;
+}
+
+.bubble.wide
+{
+	padding: 10px;
+	max-width: 100%;	
+	
 }
 
 .txt p.tag
@@ -158,8 +234,15 @@ table.nav td
 	margin-bottom: 1em;
 	border-radius: 10px;
 	padding: 10px;
-	background: #005;
+	background: #110b39;
 	color: #f0f0f0;
+}
+
+.link_small
+{
+	float: left;
+	width:23%;
+	padding-right: 2%;
 }
 
 p img
@@ -246,7 +329,7 @@ input
 .btn:hover,
 a:hover .link
 {
-	background: #00f;
+	background: #211278;
 	color: white;
 	text-decoration: none;	
 	cursor: pointer;
@@ -264,6 +347,76 @@ a:hover .link
 	z-index: -1;
 	
 }
+
+/* store */
+
+.sidebar
+{
+	width: 20vw;
+	background:red;
+	float:left;
+}
+
+.store_item
+{
+	float: left;
+	padding: 10px;
+	overflow:hidden;	
+	width: 20vw;
+}
+
+.store_item img
+{
+	width: 100%;
+	border-radius: 10px;
+}
+
+.pricetag
+{
+	margin-top: -3px;	
+	position: relative;
+	z-index: 1;
+}
+
+.store_item img
+{
+    transition: transform 0.3s ease;
+    transform-origin: 50% 50%;
+}
+
+.store_item img:hover
+{
+    transform: scale(1.2);
+
+}
+
+.pricetag .title
+{
+	font-size: 1.0em;
+	margin: 0px;
+	background: black;
+	color: white;
+	border-radius: 10px 10px 0px 0px;	
+	font-style: italic;
+	font-weight: bold;
+}
+
+.price
+{
+	background: white;
+	color: black;
+	border: dashed 1px black;
+	font-weight: bold;
+	font-size: 0.9em;
+	border-radius: 0px 0px 10px 10px;
+	margin: 0px;
+	padding: 5px;
+	text-align: right;
+	border-top: 0px;
+}
+
+/* end store */
+
 
 @media only screen and (max-aspect-ratio: 1/1)
 {
@@ -297,6 +450,11 @@ a:hover .link
 		
 	}	
 	
+	.link_small_txt
+	{
+		display: none;
+	}
+	
 	.txt
 	{
 		font-size: larger;
@@ -319,6 +477,40 @@ a:hover .link
 	{
 		display: none;
 	}
+	
+	.sticky_header
+	{
+		background: #0a071d;
+		font-size: 0.7em;
+	}
+	
+	.sticky_header a:first-of-type
+	{
+		width: 	5vw;
+		padding: 2vw;
+	}	
+	
+	.sticky_header a
+	{
+		width: 	15vw;
+		padding: 1.5vw;
+	}
+	
+	.photo,
+	.yt
+	{
+		width: 100%;
+	}
+	
+	.floater_right
+	{
+		display:none;
+	}
+	
+	.floater_left
+	{
+		display:none;
+	}	
 	
 }
 
@@ -353,3 +545,50 @@ a:hover .link
 	width: 50%;	
 	opacity: 0.25;
 }
+
+.floater_right
+{
+	filter: blur(1px);
+	position:absolute;
+	right: 0px;
+	animation: spooky_float 7s linear infinite;
+}
+
+.floater_left
+{
+	filter: blur(1px);
+	position:absolute;
+	left: 0px;
+	animation: spooky_float_2 7s linear infinite;
+}
+
+.flip_x
+{
+	-webkit-transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+}
+
+@keyframes spooky_float {
+  0%, 100% {
+    bottom: 0;
+  }
+  50% {
+    bottom: 15px;
+  }
+}
+
+@keyframes spooky_float_2 {
+  0%, 100% {
+    bottom: -5px;
+  }
+  50% {
+    bottom: 10px;
+  }
+}
+
+@font-face { 
+	font-family: VCR;
+	src: url('vcr_osd_mono.ttf') format('truetype'); 
+} 
