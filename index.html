@@ -9,12 +9,11 @@
     <link rel="icon" href="favicon.png" type="image/ico" />
     <link rel="stylesheet" href="css/style.css">	
 	<link rel="stylesheet" href="css/simple-lightbox.css"/>
-
 </head>
 <body id ="top">
 
 <div class="bg_overlay"></div>
-<div class="bg_img">
+<div style="background: url('img/noise_overlay.png') left, top / auto auto repeat, url('img/nokklip_concert.png') center top / 100% auto no-repeat; padding-top: 20vw;">
 
 <div class="sticky_header">
 	<a href="#top"><img style="margin-top:0px; margin-right:-7px" src="img/n32w.png"><img></a> 
@@ -110,10 +109,10 @@
 			<p>I like trying out different styles, so let me know in the comments which style songs you like more.</p><br>	
 			<div class="reply"><p>where can i find more music like this?</p></div>		
 			<p>I have a couple playlists u can follow:</p><br>
-			<p><a href="https://open.spotify.com/playlist/7xPEHAgssIVXgNF2hyrP05"><img style="width:128px;" src="img/phonk_bangers_playlist.png"><br> Phonk Bangers</a></p>
-			<p><a href="https://open.spotify.com/playlist/6Nr6EXZ9YuvRsMzlgET0qz"><img style="width:128px;" src="img/og_phonk_playlist.png"><br>OG Phonk</a></p>
-			<p><a href="https://open.spotify.com/playlist/5VwlYoXxRbb6MlVS5aYBNo"><img style="width:128px;" src="img/memphis_phonk_playlist.png"><br>Memphis Phonk</a></p>			
-			<p><a href="https://open.spotify.com/playlist/1K2ZrvCXEbLdV3htOIrBJA"><img style="width:128px;" src="img/bass_house_bangers_playlist.png"><br>Bass House Bangers</a></p><br>
+			<p><a href="https://open.spotify.com/playlist/7xPEHAgssIVXgNF2hyrP05"><img loading="lazy" style="width:128px;" src="img/phonk_bangers_playlist.png"><br> Phonk Bangers</a></p>
+			<p><a href="https://open.spotify.com/playlist/6Nr6EXZ9YuvRsMzlgET0qz"><img loading="lazy" style="width:128px;" src="img/og_phonk_playlist.png"><br>OG Phonk</a></p>
+			<p><a href="https://open.spotify.com/playlist/5VwlYoXxRbb6MlVS5aYBNo"><img loading="lazy" style="width:128px;" src="img/memphis_phonk_playlist.png"><br>Memphis Phonk</a></p>			
+			<p><a href="https://open.spotify.com/playlist/1K2ZrvCXEbLdV3htOIrBJA"><img loading="lazy" style="width:128px;" src="img/bass_house_bangers_playlist.png"><br>Bass House Bangers</a></p><br>
 		
 			
 			<div class="reply"><p>can i pitch u a song to consider for these playlists???</p></div>
@@ -214,24 +213,23 @@
 			var yy = scrolltotop * 0.3;
 			bg.style.backgroundPosition = xvalue + " " + yy + "px";
 			
-
 		  };
+		  
+		(function() {
+			var $gallery = new SimpleLightbox('.gallery a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
+			var $gallery1 = new SimpleLightbox('.gallery1 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
+			var $gallery2 = new SimpleLightbox('.gallery2 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
+			var $gallery3 = new SimpleLightbox('.gallery3 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
+			var $gallery4 = new SimpleLightbox('.gallery4 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
+		})();		  
+		  
 	});
 
 
 }
 </script>
 
-<script src="js/simple-lightbox.min.js"></script>
-<script>
-    (function() {
-        var $gallery = new SimpleLightbox('.gallery a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
-        var $gallery1 = new SimpleLightbox('.gallery1 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
-        var $gallery2 = new SimpleLightbox('.gallery2 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
-        var $gallery3 = new SimpleLightbox('.gallery3 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
-        var $gallery4 = new SimpleLightbox('.gallery4 a', { animationSlide: false, fadeSpeed: 100, overlayOpacity: 0.8, captionPosition: 'outside', heightRatio: 0.75, scrollZoom: false});
-    })();
-</script>
+<script defer src="js/simple-lightbox.min.js"></script>
 
 </div>
 </body>
