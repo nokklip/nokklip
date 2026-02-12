@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Free music visualizer generator for youtube">
+<meta name="author" content="Nokklip">
+<title>Nokklip Visualizer</title>
+<style>
+  body {
+    background: #0e0e0e;
+	background-image: url('img/bg_skull.png');
+    color: white;
+    text-align: center;
+    font-family: sans-serif;
+  }
+  canvas 
+  {
+    background: #000;
+	border: 1px solid gray;
+    display: block;
+  }
+  
+.file-drop-zone {
+	border: 2px dashed #999;
+	border-radius: 6px;
+	padding: 10px;
+	text-align: center;
+	cursor: pointer;
+	transition: background-color 0.2s, border-color 0.2s;
+	margin: 20px;
+}
+
+.file-drop-zone.dragover {
+	background-color: #f0f8ff;
+	border-color: #333;
+}  
+
+.controls
+{
+	width:1280px;
+	padding: 10px;
+	text-align: left;
+}
+
+.clear
+{
+	clear:both;
+}
+
+input[type="color"] 
+{
+	border: 0px;
+	padding: 0;
+	width: 30px;
+	height: 25px;
+	vertical-align: bottom;
+}
+
+.generate
+{
+	padding:10px;
+	width:85%;
+	margin-top:5px;
+}
+
+.progress-container 
+{
+	width: 100%;
+	height: 30px;
+	background-color: #555;
+	position: relative;
+	margin: 10px 0;
+	border: 1px solid black;
+}
+
+.progress-bar {
+	height: 100%;
+	width: 0; 
+	background-color: #4caf50; 
+
+	transition: width 0.4s ease-in-out;
+}
+
+#progressText 
+{
+	color: white;
+	font-weight: bold;
+	line-height: 30px;
+	float:left;
+	width:100%;
+	text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+	<h1>Nokklip Visualizer</h1>
+	Free music visualizer generator for youtube. Nothing is uploaded, generated locally in browser.<br>
+	<div style="clear:both;"><p>Select audio and image, click generate, it will playback the audio with animation and allow to save the video when finished.</p>
+	<p style="color:red">NOTE: Tab has to stay focused while video is being rendered or there will be freezing/skips in the video.</p></div>
+	<center>
+		<div class="controls">
+
+			<div style="width:33%; float:left; height:130px;"> 
+				<div class="file-drop-zone" id="drop-zone" style="height:75px;">
+					<input type="file" id="file-input" accept="audio/*" hidden>
+					<div id="file-list">Upload audio file here</div>
+					<br>
+					<label for="barscolor">Visualizer color:</label>
+					<input type="color" id="barscolor" value="#fff" onClick="event.stopPropagation();" onchange="oncolorchange.call(this)">
+				</div>
+			</div>
+
+			<div style="width:33%; float:left; height:130px;"> 
+				<div class="file-drop-zone" id="logo-drop-zone" style="height:75px;">
+
+					
+					<input type="file" id="logo-file-input" accept="image/*" hidden>
+				  
+					<div id="logo-file-list">Upload an image file here (optional)</div><br>
+				  
+					<label onClick="event.stopPropagation();">
+						<input onClick="event.stopPropagation();" type="checkbox" id="animateLogoToggle" checked>
+						Animate logo
+					</label>
+				  
+				</div>
+			</div>
+
+			<div style="width:33%; float:left; height:130px;"> 
+				<div class="file-drop-zone" style="height:75px;">		
+					<div class="progress-container" onClick="generate.call(this);">
+						<span id="progressText">Generate</span>
+					  <div class="progress-bar" id="progressBar1">
+					  </div>
+					</div>										
+					<div id="downloads"></div>	
+				</div>
+			</div>
+
+		</div>
+		<canvas id="canvas" width="1280" height="720"></canvas>
+		<audio style="width:1280px; pointer-events: none;" id="audio" controls></audio>
+
+	</center>
+
+<div class="clear">
+</div>
+
+<p>If you like this visualizer, subscribe to my <a href="https://www.youtube.com/@NOKKLIP" target="_blank">youtube channel</a>!</p>
+
+<script>
+
+(async () => {
+	window.fixWebmDurationPromise = import(
+	  "https://cdn.skypack.dev/@fix-webm-duration/fix"
+	).then(m => m.fixWebmDuration);  
+})();
+
+const fileInput = document.getElementById("file-input");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let blurredCanvas = null;
+let blurredCtx = null;
+let animateLogoEnabled = true;
+let color = '#fff';
+let recordingStartTime;
+let outName;
+let wasRecording = false;
+let recorder;
+
+let logoImg = null;
+let logoScale = 0.5;
+let logoScaleTarget = 1;
+let lastSmoothed = 0;
+let blurredBg = null;
+var stream;
+let destination;
+let combinedStream;
+let chunks = [];
+const BAR_COUNT = 48;
+const BASS_CUTOFF = 0.24;   // ignore sub rumble
+const BASS_MAX_GAIN = 1.6; // cap bass boost
+const COMP_KNEE = 0.25*1.5;    // compression knee
+
+let energy = new Array(BAR_COUNT).fill(0);
+let velocity = new Array(BAR_COUNT).fill(0);
+let lastBass = 0;
+let globalPulse = 0;
+
+let audioContext;
+let analyser;
+let analyserAvg;
+let dataArray;
+let bufferLength;
+let audio;
+let animationId;
+let renderingPaused = false;
+
+document.addEventListener("visibilitychange", async () => 
+{
+	console.log("test", document.hidden);
+
+	if (document.hidden) 
+	{
+		if (recorder?.state === "recording") 
+		{
+			wasRecording = true;
+
+			recorder.pause();          // pause recording
+			pauseRendering();          // your render loop
+			await audioContext.suspend(); // pause audio
+
+			alert("Recording paused because the tab lost focus.");
+		}
+	} 
+	else
+	{
+		if (wasRecording) 
+		{
+			await audioContext.resume(); // resume audio
+			resumeRendering();           // resume render loop
+			recorder.resume();           // resume recording
+
+			wasRecording = false;
+		}
+	}
+});
+
+function generate()
+{
+	recordingStartTime = performance.now();
+	audio.play();
+	stream = canvas.captureStream(60); // 60 FPS
+	
+	combinedStream = new MediaStream([
+		...stream.getVideoTracks(),
+		...destination.stream.getAudioTracks()
+	]);
+
+	recorder = new MediaRecorder(combinedStream, {
+		mimeType: "video/webm; codecs=vp8,opus",
+		audioBitsPerSecond: 128000,
+		videoBitsPerSecond: 6_000_000
+	});	
+	
+	recorder.ondataavailable = e => chunks.push(e.data);
+
+	recorder.onstop = async () => {
+	
+		var blob;
+		var url;
+	
+		const fixWebmDuration = await window.fixWebmDurationPromise;
+		if(typeof fixWebmDuration == 'function')
+		{
+			// fix webm to make it seekable
+			blob = new Blob(chunks, { type: "video/webm" });
+			const durationMs = performance.now() - recordingStartTime;
+			const fixedBlob = await fixWebmDuration(blob, durationMs);
+			url = URL.createObjectURL(fixedBlob);		
+		}
+		else
+		{
+			// without webm fix
+			blob = new Blob(chunks, { type: "video/webm" });
+			url = URL.createObjectURL(blob);			
+		}
+		
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = outName;
+		
+		a.textContent = outName; // text the user sees
+		a.style.display = "block"; // make it visible		
+		
+		document.getElementById("downloads").appendChild(a);
+
+		// optional: revoke object URL after some time to free memory
+		//setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);		
+		
+		a.click();
+	};
+	
+	recorder.start(1000);
+
+	var intervalId = setInterval(() => {
+	
+		var percent = (audio.currentTime / audio.duration * 100).toFixed(0);	
+		
+		const button = document.querySelector(".button");
+
+		var progressBar = document.getElementById("progressBar1");
+		progressBar.style.width = `${percent}%`;
+		
+		const progressText = document.getElementById('progressText');
+		
+		progressText.innerHTML = Math.floor(percent) + '%';
+	
+	}, 250);
+	
+}
+
+function audioEnded(event) 
+{
+	console.log('Audio finished playing');
+	requestAnimationFrame(() => recorder.stop());
+
+	const btn = document.getElementById('generate');
+	//btn.disabled = false; 
+}
+
+fileInput.addEventListener("change", async () => {
+	const file = fileInput.files[0];
+	if (!file) return;
+	
+	outName = file.name.replace(/\.[^/.]+$/, "") + "-visualizer.webm";	
+	
+	// Stop previous run
+	if (animationId) cancelAnimationFrame(animationId);
+	if (audio) audio.pause();
+	if (audioContext) audioContext.close();
+
+	audio.src = URL.createObjectURL(file);
+	audio.load();
+	audio.addEventListener('ended', audioEnded);
+
+	//audio = new Audio(URL.createObjectURL(file));
+	audio.controls = true;
+	//document.body.appendChild(audio);
+
+	audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+	// IMPORTANT: resume context (fixes "nothing happens")
+	await audioContext.resume();
+
+	analyser = audioContext.createAnalyser();
+	analyser.fftSize = 1024;
+	analyser.smoothingTimeConstant = 0.8;
+	analyser.smoothingTimeConstant = 0.275;
+	//analyser.smoothingTimeConstant = 0.75;
+
+	bufferLength = analyser.frequencyBinCount;
+	dataArray = new Uint8Array(bufferLength);
+
+	const source = audioContext.createMediaElementSource(audio);
+	source.connect(analyser);
+	analyser.connect(audioContext.destination);
+	
+	
+	// analyzer for music
+	
+	analyserAvg = audioContext.createAnalyser();
+	analyserAvg.fftSize = 1024;
+	analyserAvg.smoothingTimeConstant = 0.75;
+	//analyserAvg.smoothingTimeConstant = 0.275;
+
+
+	source.connect(analyserAvg);
+	analyserAvg.connect(audioContext.destination);	
+
+	destination = audioContext.createMediaStreamDestination();
+	analyserAvg.connect(destination);
+
+	drawVisualizer(); 
+});
+
+function oncolorchange()
+{
+	color = this.value;
+	console.log(color, this);
+}
+
+function createBlurredLogo() 
+{
+  const size = 512; // IMPORTANT: cap resolution
+  blurredCanvas = document.createElement('canvas');
+  blurredCanvas.width = size;
+  blurredCanvas.height = size;
+  blurredCtx = blurredCanvas.getContext('2d');
+
+  blurredCtx.clearRect(0, 0, size, size);
+  blurredCtx.filter = 'blur(5px)';
+  blurredCtx.globalAlpha = 1.0;
+
+  const scale = Math.min(
+    size / logoImg.width,
+    size / logoImg.height
+  );
+
+  const w = logoImg.width * scale;
+  const h = logoImg.height * scale;
+
+  blurredCtx.drawImage(
+    blurredBg,
+    size / 2 - w / 2,
+    size / 2 - h / 2,
+    w,
+    h
+  );
+
+  blurredCtx.filter = 'none';
+}
+
+
+
+window.onload = function() 
+{
+	audio = document.getElementById("audio");
+	
+	// audio drop zone
+	{
+		const dropZone = document.getElementById("drop-zone");
+		const fileInput = document.getElementById("file-input");
+		const fileList = document.getElementById("file-list");
+
+		// Clicking the zone opens the file input
+		dropZone.addEventListener("click", () => fileInput.click());
+
+		// Handle file selection from dialog
+		fileInput.addEventListener("change", (e) => {
+		  handleFiles(e.target.files);
+		});
+
+		// Handle drag over
+		dropZone.addEventListener("dragover", (e) => {
+		  e.preventDefault();
+		  dropZone.classList.add("dragover");
+		});
+
+		// Handle drag leave
+		dropZone.addEventListener("dragleave", () => {
+		  dropZone.classList.remove("dragover");
+		});
+
+		// Handle file drop
+		dropZone.addEventListener("drop", (e) => {
+		  e.preventDefault();
+		  dropZone.classList.remove("dragover");
+		  handleFiles(e.dataTransfer.files);
+		});
+
+		// Display selected files
+		function handleFiles(files) {
+		  fileList.innerHTML = "";
+		  Array.from(files).forEach((file) => {
+			const listItem = document.createElement("div");
+			listItem.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+			fileList.appendChild(listItem);
+		  });
+		}	
+	}
+	
+	// logo drop zone
+	{
+		const dropZone = document.getElementById("logo-drop-zone");
+		const fileInput = document.getElementById("logo-file-input");
+		const fileList = document.getElementById("logo-file-list");
+
+		// Clicking the zone opens the file input
+		dropZone.addEventListener("click", () => fileInput.click());
+
+		// Handle file selection from dialog
+		fileInput.addEventListener("change", (e) => {
+		  handleFiles(e.target.files);
+		});
+
+		// Handle drag over
+		dropZone.addEventListener("dragover", (e) => {
+		  e.preventDefault();
+		  dropZone.classList.add("dragover");
+		});
+
+		// Handle drag leave
+		dropZone.addEventListener("dragleave", () => {
+		  dropZone.classList.remove("dragover");
+		});
+
+		// Handle file drop
+		dropZone.addEventListener("drop", (e) => {
+		  e.preventDefault();
+		  dropZone.classList.remove("dragover");
+		  handleFiles(e.dataTransfer.files);
+		});
+
+		// Display selected files
+		function handleFiles(files) {
+		  fileList.innerHTML = "";
+		  Array.from(files).forEach((file) => {
+			const listItem = document.createElement("div");
+			listItem.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+			fileList.appendChild(listItem);
+			drawVisualizer(); 
+		  });
+		}			
+		
+		// Load logo image
+		fileInput.addEventListener('change', (e) => {
+			const file = e.target.files[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				logoImg = new Image();
+				logoImg.src = reader.result;
+				
+				blurredBg = new Image();
+				blurredBg.src = reader.result;		
+				blurredBg.onload = createBlurredLogo;
+
+				
+			};
+			reader.readAsDataURL(file);
+		});
+		
+	}
+	
+	const animateLogoToggle = document.getElementById('animateLogoToggle');
+
+	animateLogoEnabled = animateLogoToggle.checked;
+
+
+	animateLogoToggle.addEventListener('change', () => {
+	animateLogoEnabled = animateLogoToggle.checked;
+	  
+	if(!animateLogoEnabled)
+	{
+		logoScale = 0.5;
+	}
+	  
+	});	
+	
+}
+
+function pauseRendering() 
+{
+	renderingPaused = true;
+}
+
+function resumeRendering() 
+{
+	if (!renderingPaused) return;
+	renderingPaused = false;
+	requestAnimationFrame(drawVisualizer);
+}
+
+function drawVisualizer() 
+{
+	if (renderingPaused)
+		return;
+
+	animationId = requestAnimationFrame(drawVisualizer);
+	if (!analyserAvg) 
+		return;
+
+	analyserAvg.getByteFrequencyData(dataArray);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	const centerY = canvas.height / 2;
+	const barWidth = canvas.width / BAR_COUNT;
+	const binsPerBar = Math.floor(dataArray.length / BAR_COUNT);
+
+	let bassEnergy = 0;
+
+	for (let i = 0; i < BAR_COUNT; i++) 
+	{
+		let sum = 0;
+		for (let j = 0; j < binsPerBar; j++) 
+		{
+			sum += dataArray[i * binsPerBar + j];
+		}
+
+		let value = sum / binsPerBar / analyserAvg.fftSize * 4; // 2048 - 8
+
+		// Heavy EDM bass emphasis
+		if (i < 3) 
+		{
+		  // Noise gate (ignore low rumble)
+		  let gated = Math.max(0, value - BASS_CUTOFF);
+
+		  // Soft compression
+		  gated = gated < COMP_KNEE
+			? gated
+			: COMP_KNEE + (gated - COMP_KNEE) * 0.4;
+
+		  // Adaptive gain (only boost when bass is real)
+		  const gain =
+			1 + Math.min(BASS_MAX_GAIN - 1, gated * 2.2);
+
+		  value = gated * gain;
+		  bassEnergy += value*2;
+		}
+
+		//  additions
+		if( i < 3)
+		{
+			if(value > 0)
+			{
+				//console.log(i, value);
+			}
+			
+			if (	(i == 0 && value < 0.7) ||
+					(i == 1 && value < 0.4) ||
+					(i == 2 && value < 0.2)
+			)
+			{
+				value = 0.0;
+				energy[i] = 0.0;
+				bassEnergy = 0;
+				continue;
+			}
+			else
+			{
+				globalPulse += 0.125 * 0.25;
+			}
+			
+		}
+
+		// Nonlinear shaping (punchy kicks)
+		value = Math.pow(value, 4.4);
+
+		if(i == 0)
+			value *= 0.5;
+			
+		let stiffness = 0.22*0.98;
+		let damping = 0.72*0.99;
+		
+		stiffness = 0.9;
+		damping = 0.6;
+
+		if( i > BAR_COUNT * 0.75)
+		{
+
+		}
+		else if( i > BAR_COUNT * 0.5)
+		{
+			damping = 0.6;
+			stiffness = 0.9;
+		}
+		else if(i < 3)
+		{
+			damping = 0.7;
+			stiffness = 0.7;				
+		}
+
+		// Spring physics
+		velocity[i] += (value - energy[i]) * stiffness;
+		velocity[i] *= damping;
+		energy[i] += velocity[i]*2;
+
+		energy[i] = Math.max(0, Math.min(1, energy[i]));
+	}
+
+	// Kick pulse (global scale)
+	
+	bassEnergy /= 3;
+	
+	//bassEnergy = 0;	
+	
+	const kick = Math.max(0, bassEnergy - lastBass);
+	lastBass = bassEnergy;
+	
+	globalPulse += kick * 1.4*4;
+	globalPulse *= 0.9;
+
+	// draw logo
+    if (logoImg) 
+	{
+	
+		// Smooth average for pumping effect
+		const lowFreqData = dataArray.slice(3, 6); // focus on bass
+		let avg = lowFreqData.reduce((a, b) => a + b) / lowFreqData.length;
+
+	
+		// DRAW BLURRED AS bg
+		if(blurredCanvas)
+		{
+			var bgpump = avg;
+			
+			ctx.globalAlpha = 0.15;
+			const logoWidth = 2048; // scale down original size
+			const logoHeight = 2048+ bgpump;	
+			
+			const x = canvas.width / 2 - logoWidth / 2;
+			const y = canvas.height / 2 - logoHeight / 2; // position above bars			
+			
+			ctx.drawImage(blurredCanvas, x, y, logoWidth, logoHeight);
+			//ctx.filter = 'blur(1.5px) contrast(1.2) saturate(0.8)';
+			ctx.globalAlpha = 1.0;
+		}		
+	
+		var logo_w = 768; // logoImg.width
+		var logo_h = 768; // logoImg.height
+		
+		if(logoImg.width != logoImg.height)
+		{
+			if(logoImg.width > logoImg.height)
+			{	
+				logo_h = logoImg.height * 768 / logoImg.width;
+			}
+			else
+			{
+				logo_w = logoImg.width * 768 / logoImg.height;
+			}
+			
+		}
+	
+		//logoScaleTarget = Math.min(1.5, 1 + globalPulse);
+		//logoScaleTarget = 1 + globalPulse;
+		
+		if(animateLogoEnabled)
+		{
+			//avg *= globalPulse*0.5;
+			avg *= avg*0.01;
+			
+			var smoothing = 0.0;
+			
+			const smoothed = lastSmoothed * smoothing + avg * (1.0-smoothing); // smooth over frames
+			lastSmoothed = smoothed;
+
+			// Calculate scale based on smoothed bass
+			logoScaleTarget = 1 + smoothed / 1024; // adjust sensitivity								
+			logoScale += (logoScaleTarget - logoScale) * 0.9; // smooth scaling		
+			logoScale *= 0.45;	
+		}
+
+	
+		// main logo
+		const logoWidth = logo_w * logoScale; // scale down original size
+		const logoHeight = logo_h * logoScale;
+		const x = canvas.width / 2 - logoWidth / 2;
+		const y = canvas.height * 0.45 - logoHeight / 2; // position above bars
+		ctx.drawImage(logoImg, x, y, logoWidth, logoHeight);
+    }
+	
+	// Draw bars (centered, minimal)
+	var off_x = 215;
+	var off_y = 200;
+	ctx.fillStyle = color;
+
+	for (let i = 0; i < BAR_COUNT-16; i++) 
+	{
+		let height = energy[i] * canvas.height * 0.35 * (1 + globalPulse) * 0.5;
+		
+		height = Math.min(height, 200);
+		
+		const x = i * barWidth;
+		const y = centerY - height / 2;
+
+		ctx.fillRect(
+			off_x + x + barWidth * 0.25,
+			off_y + y,
+			barWidth * 0.5,
+			height
+		);
+	}
+	
+}
+
+</script>
+
+</body>
+</html>
