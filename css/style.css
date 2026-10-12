@@ -1,6 +1,7 @@
 html
 {
 	scroll-behavior: smooth;
+	overflow-x: clip;
 }
 
 body {
@@ -8,10 +9,11 @@ body {
 	color: #555;
 	line-height: 1.5;
 	font-size: 1.2vmax;
+	background: #000;
+	margin: 0px;
 	background: #111;
 	background-image: url('../img/bg_skull.png');
-	background-size: 350px;
-	margin: 0px;
+	background-size: 350px;	
 }
 
 .clickselect
@@ -54,6 +56,9 @@ body {
 .bg_img
 {
 	background: url("../img/noise_overlay.png") left, top / auto auto repeat, url("../img/nokklip_concert.png") center top / 100% auto no-repeat;
+	
+
+	
 	padding-top: 20vw;
 }
 
@@ -78,19 +83,19 @@ body {
 
 .noise_overlay
 {
-background: url("../img/noise.gif") left, top / auto auto repeat;
+  background: url("../img/noise.gif") left, top / auto auto repeat;
   mix-blend-mode: overlay;
   width: 100vw;
   height: 100vh;
   position: fixed;
   z-index: 9999999999;
-pointer-events: none;
-opacity: 0.5;  
+  pointer-events: none;
+  opacity: 0.5;  
 }
 
 .section
 {
-	margin-bottom: 40vh;
+	margin-bottom: 25vh;
 	//text-align: left;
 	scroll-margin-top: 100px;
 }
@@ -446,6 +451,14 @@ a:hover .link
 		background-size: 100%;		
 	}
 	
+	.bg_img
+	{
+		background: 
+		url("../img/noise_overlay.png") left, top / auto auto repeat,
+		url("../img/nokklip_concert.png") center top / 200% auto no-repeat;
+		padding-top: 30vw;
+	}	
+	
 	.content
 	{
 		width: 90%;
@@ -532,6 +545,11 @@ a:hover .link
 		display:none;
 	}	
 	
+	.cd_promo
+	{
+		display:none;
+	}
+	
 }
 
 @keyframes flickerAnimation {
@@ -571,7 +589,8 @@ a:hover .link
 	filter: blur(1px);
 	position:absolute;
 	right: 0px;
-	animation: spooky_float 7s linear infinite;
+	animation: spooky_float 5s linear infinite;
+    //transform: scale(1.25, 1.25);	
 }
 
 .floater_left
@@ -579,7 +598,7 @@ a:hover .link
 	filter: blur(1px);
 	position:absolute;
 	left: 0px;
-	animation: spooky_float_2 7s linear infinite;
+	animation: spooky_float_2 6s linear infinite;
 }
 
 .flip_x
@@ -590,21 +609,38 @@ a:hover .link
     transform: scale(-1, 1);
 }
 
+.cd_promo
+{
+	position: absolute;
+	bottom: 10vh; 
+	left: 80%; 
+	animation: spooky_float_cd 4s linear infinite;
+}
+
 @keyframes spooky_float {
   0%, 100% {
-    bottom: 0;
+    top: 20vh;
   }
   50% {
-    bottom: 15px;
+    top: 22vh;
   }
 }
 
 @keyframes spooky_float_2 {
   0%, 100% {
-    bottom: -5px;
+    top: 21vh;
   }
   50% {
-    bottom: 10px;
+    top: 19vh;
+  }
+}
+
+@keyframes spooky_float_cd {
+  0%, 100% {
+    bottom: 10vh;
+  }
+  50% {
+    bottom: 12vh;
   }
 }
 
