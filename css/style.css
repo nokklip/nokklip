@@ -56,10 +56,18 @@ body {
 .bg_img
 {
 	background: url("../img/noise_overlay.png") left, top / auto auto repeat, url("../img/nokklip_concert.png") center top / 100% auto no-repeat;
-	
-
-	
 	padding-top: 20vw;
+}
+
+#games
+{
+	scroll-margin-top: 400px;
+}
+
+.games_bg
+{
+	background: url("../img/nokklip-games.png") center top / 100% auto no-repeat;
+	padding-top:300px;
 }
 
 .bg_img_store
@@ -78,7 +86,12 @@ body {
 
 .content
 {
-	width: 50%;
+	//width: 50%;
+}
+
+.webring img
+{
+	padding: 10px 5px;
 }
 
 .noise_overlay
@@ -95,9 +108,11 @@ body {
 
 .section
 {
+	width:50%;
 	margin-bottom: 25vh;
 	//text-align: left;
 	scroll-margin-top: 100px;
+
 }
 
 .bn img
@@ -370,77 +385,165 @@ a:hover .link
 	background-size: 50px;
 	background-repeat: repeat-y;
 	z-index: -1;
-	
 }
 
-/* store */
-
-.sidebar
+.skel_hand
 {
-	width: 20vw;
-	background:red;
-	float:left;
+	position: absolute;
+	z-index: 2;
+	width: 47vw;
+	margin-left: -18.5vw;	
+	top: 23vh;	
 }
 
-.store_item
+.spotify_promo
 {
-	float: left;
-	padding: 10px;
-	overflow:hidden;	
-	width: 20vw;
+	width: 20%;
+	position: absolute;
+	top: 18vh;
+	left: 2vw;
+	transform: rotatez(-1deg);
 }
 
-.store_item img
+.spotify_promo iframe
 {
-	width: 100%;
-	border-radius: 10px;
+	filter: drop-shadow(2px 4px 0px #260b2c);
 }
 
-.pricetag
+.music-note {
+  display: inline-block;
+  transform-origin: center;
+  animation: note-play 1.0s ease-in-out infinite alternate;
+}
+
+@keyframes note-play {
+  0%   { transform: rotate(-8deg) scale(1); }
+  60%  { transform: rotate(10deg) scale(1.2); }
+  100% { transform: rotate(-4deg) scale(1.08); }
+}
+
+.cd_promo
 {
-	margin-top: -3px;	
-	position: relative;
-	z-index: 1;
+	position: absolute;
+	bottom: 10vh; 
+	left: 78%; 
+	animation: spooky_float_cd 4s linear infinite;
 }
 
-.store_item img
+.cd_promo h2
 {
-    transition: transform 0.3s ease;
-    transform-origin: 50% 50%;
+	display:none;
 }
 
-.store_item img:hover
+@keyframes flickerAnimation {
+  0%   { opacity:0.26; filter: blur(0.0px);    }
+  20%   { opacity:0.27; filter: blur(1.1px); }
+  40%  { opacity:0.26; }
+  60%  { opacity:0.27; filter: blur(0.0px);    }
+  80%  { opacity:0.25; }
+  90%  { opacity:0.28; }
+  100% { opacity:0.25; }
+}
+
+.animate-flicker {
+    animation: flickerAnimation 0.5s infinite;
+}
+
+.bg_img_1
 {
-    transform: scale(1.2);
-
+	position: fixed;
+	right: 100;
+	z-index: -5;
+	width: 50%;
+	opacity: 0.25;
 }
 
-.pricetag .title
+.bg_img_2
 {
-	font-size: 1.0em;
-	margin: 0px;
-	background: black;
-	color: white;
-	border-radius: 10px 10px 0px 0px;	
-	font-style: italic;
-	font-weight: bold;
+	position: fixed;
+	left: -200px;
+	z-index: -5;
+	width: 50%;	
+	opacity: 0.25;
 }
 
-.price
+.succubus
 {
-	background: white;
-	color: black;
-	border: dashed 1px black;
-	font-weight: bold;
-	font-size: 0.9em;
-	border-radius: 0px 0px 10px 10px;
-	margin: 0px;
-	padding: 5px;
-	text-align: right;
-	border-top: 0px;
+	position:absolute;	
+	width: 30vw;
+	right:0%;	
+	//filter: blur(1px);
+	pointer-events: none;
+	animation: spooky_float_suc 1.5s cubic-bezier(0.37, 0, 0.63, 1) infinite;	
 }
 
-/* end store */
+.floater_right
+{
+	filter: blur(1px);
+	position:absolute;
+	right: 0px;
+	animation: spooky_float 5s linear infinite;
+    //transform: scale(1.25, 1.25);	
+	display: none;
+}
+
+.floater_left
+{
+	filter: blur(1px);
+	position:absolute;
+	left: 0px;
+	animation: spooky_float_2 6s linear infinite;
+		display: none;
+}
+
+.flip_x
+{
+	-webkit-transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    transform: scale(-1, 1);
+}
+
+@keyframes spooky_float {
+  0%, 100% {
+    top: 20vh;
+  }
+  50% {
+    top: 22vh;
+  }
+}
+
+@keyframes spooky_float_2 {
+  0%, 100% {
+    top: 21vh;
+  }
+  50% {
+    top: 19vh;
+  }
+}
+
+@keyframes spooky_float_cd {
+  0%, 100% {
+    top: 10vh;
+  }
+  50% {
+    top: 11vh;
+  }
+}
+
+@keyframes spooky_float_suc {
+  0%, 100% {
+    top: 35vh;
+  }
+  50% {
+    top: 36vh;
+  }
+}
+
+@font-face { 
+	font-family: VCR;
+	src: url('vcr_osd_mono.ttf') format('truetype'); 
+} 
 
 
 @media only screen and (max-aspect-ratio: 1/1)
@@ -547,104 +650,24 @@ a:hover .link
 	
 	.cd_promo
 	{
-		display:none;
+		position:inherit;
+		margin-bottom: 15vh;
 	}
 	
+	.cd_promo h2
+	{
+		display:inline;
+	}
+	
+	.spotify_promo
+	{
+		width:100%;
+		position:inherit;
+		margin-bottom: 15vh;
+	}
+	
+	.section
+	{
+		margin-bottom: 15vh;
+	}
 }
-
-@keyframes flickerAnimation {
-  0%   { opacity:0.26; filter: blur(0.0px);    }
-  20%   { opacity:0.27; filter: blur(1.1px); }
-  40%  { opacity:0.26; }
-  60%  { opacity:0.27; filter: blur(0.0px);    }
-  80%  { opacity:0.25; }
-  90%  { opacity:0.28; }
-  100% { opacity:0.25; }
-}
-
-.animate-flicker {
-    animation: flickerAnimation 0.5s infinite;
-}
-
-.bg_img_1
-{
-	position: fixed;
-	right: 100;
-	z-index: -5;
-	width: 50%;
-	opacity: 0.25;
-}
-
-.bg_img_2
-{
-	position: fixed;
-	left: -200px;
-	z-index: -5;
-	width: 50%;	
-	opacity: 0.25;
-}
-
-.floater_right
-{
-	filter: blur(1px);
-	position:absolute;
-	right: 0px;
-	animation: spooky_float 5s linear infinite;
-    //transform: scale(1.25, 1.25);	
-}
-
-.floater_left
-{
-	filter: blur(1px);
-	position:absolute;
-	left: 0px;
-	animation: spooky_float_2 6s linear infinite;
-}
-
-.flip_x
-{
-	-webkit-transform: scale(-1, 1);
-    -moz-transform: scale(-1, 1);
-    -o-transform: scale(-1, 1);
-    transform: scale(-1, 1);
-}
-
-.cd_promo
-{
-	position: absolute;
-	bottom: 10vh; 
-	left: 80%; 
-	animation: spooky_float_cd 4s linear infinite;
-}
-
-@keyframes spooky_float {
-  0%, 100% {
-    top: 20vh;
-  }
-  50% {
-    top: 22vh;
-  }
-}
-
-@keyframes spooky_float_2 {
-  0%, 100% {
-    top: 21vh;
-  }
-  50% {
-    top: 19vh;
-  }
-}
-
-@keyframes spooky_float_cd {
-  0%, 100% {
-    bottom: 10vh;
-  }
-  50% {
-    bottom: 12vh;
-  }
-}
-
-@font-face { 
-	font-family: VCR;
-	src: url('vcr_osd_mono.ttf') format('truetype'); 
-} 
