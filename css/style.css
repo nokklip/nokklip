@@ -92,6 +92,7 @@ body {
 .webring img
 {
 	padding: 10px 5px;
+	width:8vw;	
 }
 
 .noise_overlay
@@ -668,6 +669,14 @@ a:hover .link
 	
 	.section
 	{
+		width: 100%;
 		margin-bottom: 15vh;
 	}
+	
+	.webring img
+	{
+		padding: 10px 5px;
+		width:50vw;	
+	}	
+	
 }
