@@ -546,6 +546,10 @@ a:hover .link
 	src: url('vcr_osd_mono.ttf') format('truetype'); 
 } 
 
+.playlist_icon
+{
+	width:10vw;
+}
 
 @media only screen and (max-aspect-ratio: 1/1)
 {
@@ -677,6 +681,11 @@ a:hover .link
 	{
 		padding: 10px 5px;
 		width:50vw;	
+	}	
+	
+	.playlist_icon
+	{
+		width:40vw;
 	}	
 	
 }
