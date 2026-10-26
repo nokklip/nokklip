@@ -409,6 +409,7 @@ a:hover .link
 .spotify_promo iframe
 {
 	filter: drop-shadow(2px 4px 0px #260b2c);
+	height: 450px;		
 }
 
 .music-note {
